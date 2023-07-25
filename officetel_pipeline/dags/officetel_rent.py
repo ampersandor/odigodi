@@ -4,14 +4,43 @@ from datetime import datetime
 from datetime import timedelta
 
 import requests
-import mysql.connector
-from mysql.connector import errorcode
+import psycopg2
+
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
+from airflow.hooks.postgres_hook import PostgresHook
 
 from plugins import slack
+
+
+def _create_table(cur, schema, table, drop_first):
+    if drop_first:
+        cur.execute(f"DROP TABLE IF EXISTS {schema}.{table};")
+    query = f"""
+        CREATE TABLE IF NOT EXISTS {schema}.{table} (
+            upload_date DATE DEFAULT CURRENT_DATE,
+            upload_time TIME DEFAULT CURRENT_TIME,
+            trade_ymd DATE,
+            ku VARCHAR(30),
+            dong VARCHAR(30),
+            jicode VARCHAR(30),
+            name VARCHAR(30),
+            floor INT,
+            area FLOAT,
+            built_year INT,
+            deposite INT,
+            monthly_pay INT
+        );
+    """
+    logging.info(query)
+    cur.execute(query)
+
+
+def get_postgres_connection():
+    hook = PostgresHook(postgres_conn_id = 'postgres_docker')
+    return hook.get_conn().cursor()
 
 
 @task
@@ -59,53 +88,25 @@ def transform(data):
     return res
 
 @task
-def load(dbname, table, data, user="airflow", password="airflow", host="localhost", port="3306", drop_first=False):
+def load(schema, table, data, drop_first=False):
+    cur = get_postgres_connection()
+    _create_table(cur, schema, table, drop_first)
+
     try:
-        connection = mysql.connector.connect(
-            user=user,
-            password=password,
-            host=host,
-            port=port,
-        )
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print("Something is wrong with your user name or password")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            print("Database does not exist")
-        else:
-            print(err)
-        raise
-    else:
-        cur = connection.cursor()
-        if drop_first:
-            cur.execute(f"DROP TABLE IF EXISTS {dbname}.{table};")
-        query = f"""
-            CREATE TABLE IF NOT EXISTS {dbname}.{table} (
-                upload_date DATE DEFAULT CURRENT_DATE,
-                upload_time TIME DEFAULT CURRENT_TIME,
-                trade_ymd DATE,
-                ku VARCHAR(30) CHARACTER SET utf8,
-                dong VARCHAR(30) CHARACTER SET utf8,
-                jicode VARCHAR(30) CHARACTER SET utf8,
-                name VARCHAR(30) CHARACTER SET utf8,
-                floor INT,
-                area FLOAT,
-                built_year INT,
-                deposite INT,
-                monthly_pay INT
-            );
-        """
-        cur.execute(query)
+        cur.execute("BEGIN;")
         for row in data:
             query = f"""
-                INSERT INTO {dbname}.{table} (trade_ymd, ku, dong, jicode, name, floor, area, built_year, deposite, monthly_pay)
+                INSERT INTO {schema}.{table} (trade_ymd, ku, dong, jicode, name, floor, area, built_year, deposite, monthly_pay)
                 VALUES ('{row[0]}', '{row[1]}', '{row[2]}', '{row[3]}', '{row[4]}', {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]})
             """
             logging.info(query)
-            cur.execute(query)
-        connection.commit()
-        connection.close()
-
+            cur.execute(query)       
+        cur.execute("COMMIT;")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        cur.execute("ROLLBACK;")
+        raise 
+    logging.info("load done")
 
 with DAG(
     dag_id = "officetel_rent",
@@ -113,17 +114,16 @@ with DAG(
     schedule="0 0 1 * *", # every month (day 1, 00:00)
     max_active_runs=1,
     tags=['ODIGODI', 'Officetel'],
-    catchup=True,
+    catchup=False,
     default_args={
-        "retries": 1,
+        "retries": 0,
         "retry_delay": timedelta(minutes=3),
         "on_failure_callback" : slack.on_failure_callback
     }
 ) as dag:
-    dbname = "officetel"
+    schema = "officetel"
     table = "rent"
-    dong_code = {"방이동": "11710"}
-    mysql_host = Variable.get("mysql_host")
+    dong_code = {"방이동": "11710"} # https://www.code.go.kr/stdcode/regCodeL.do
     url = Variable.get("data_portal_url_rent")
     key = Variable.get("data_portal_api_key")
-    load(dbname, table, transform(extract(url, key, dong_code["방이동"])), host=mysql_host)
+    load(schema, table, transform(extract(url, key, dong_code["방이동"])))
