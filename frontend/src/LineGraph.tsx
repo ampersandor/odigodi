@@ -23,10 +23,6 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
-//   interaction: {
-//     mode: "index" as const,
-//     itersect: false,
-//   },
   plugins: {
     legend: {
       position: 'top' as const,
