@@ -36,8 +36,8 @@ def load(schema, table, query):
         if count == 0:
             raise ValueError(f"{table} didn't have any record")
         
-        query = f"""DROP TABLE IF EXISTS {schema}.{table}_UI;
-                ALTER TABLE {schema}.{table}_temp RENAME to {table}_UI;"""
+        query = f"""DROP TABLE IF EXISTS {schema}.{table};
+                ALTER TABLE {schema}.{table}_temp RENAME to {table};"""
         logging.info(query)
         cur.execute(query)
         cur.execute("COMMIT;")
@@ -60,7 +60,7 @@ with DAG(
     }
 ) as dag:
     warehouse_schema = "officetel"
-    ui_schema = "prod"
+    ui_schema = "public"
 
     table = "trade"
     query = f"""select trade_ymd, name, area, price from {warehouse_schema}.{table} where dong='방이동' order by name, area, trade_ymd;"""
@@ -70,6 +70,6 @@ with DAG(
     query = f"""select trade_ymd, name, area, deposite from {warehouse_schema}.{table} where dong='방이동' and monthly_pay=0 order by name, area, trade_ymd;"""
     load(ui_schema, table, query)
 
-    table = "latlong"
+    table = "location"
     query = f"""select name, lat, lng from {warehouse_schema}.{table} where dong='방이동' and lat is not NULL and lng is not NULL;"""
     load(ui_schema, table, query)

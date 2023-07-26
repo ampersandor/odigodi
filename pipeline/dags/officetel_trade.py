@@ -114,7 +114,7 @@ with DAG(
     schedule="0 0 1 * *", # every month (day 1, 00:00)
     max_active_runs=1,
     tags=['ODIGODI', 'officetel', "ETL"],
-    catchup=False,
+    catchup=True,
     default_args={
         "retries": 0,
         "retry_delay": timedelta(minutes=3),
