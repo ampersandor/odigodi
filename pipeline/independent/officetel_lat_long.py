@@ -101,11 +101,12 @@ def load(dbname, table, data, user="airflow", password="airflow", host="localhos
 
 
 
-dbname = "officetel"
-table = "rent"
+# dbname = "officetel"
+# table = "rent"
 
-rows = extract(dbname, table)
+# rows = extract(dbname, table)
 
-data = extract_lat_long(rows)
+# data = extract_lat_long(rows)
 
-load(dbname, "latlong", data)
+# load(dbname, "latlong", data)
+print(get_lat_long('송파구', '신천동', '11-8'))
