@@ -10,4 +10,5 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     volumes:
+      - /Users/ampersandor/data/postgres-data:/var/lib/postgresql/data
       - "./init/:/docker-entrypoint-initdb.d/"

@@ -69,13 +69,17 @@ with DAG(
         "on_failure_callback" : slack.on_failure_callback
     }
 ) as dag:
-    schema = "officetel"
+    warehouse_schema = "officetel"
+    ui_schema = "prod"
+
     table = "trade"
+    query = f"""select trade_ymd, name, area, price from {warehouse_schema}.{table} where dong='방이동' order by name, area, trade_ymd;"""
+    load(ui_schema, table, query)
 
-    query = f"""select trade_ymd, name, area, price from {schema}.{table} where dong='방이동' order by name, area, trade_ymd;"""
-    load(schema, table, query)
-
-    schema = "officetel"
     table = "rent"
-    query = f"""select trade_ymd, name, area, deposite from {schema}.{table} where dong='방이동' and monthly_pay=0 order by name, area, trade_ymd;"""
-    load(schema, table, query)
+    query = f"""select trade_ymd, name, area, deposite from {warehouse_schema}.{table} where dong='방이동' and monthly_pay=0 order by name, area, trade_ymd;"""
+    load(ui_schema, table, query)
+
+    table = "latlong"
+    query = f"""select name, lat, lng from {warehouse_schema}.{table} where dong='방이동' and lat is not NULL and lng is not NULL;"""
+    load(ui_schema, table, query)
