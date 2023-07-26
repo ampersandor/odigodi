@@ -112,7 +112,7 @@ with DAG(
     dag_id = "officetel_lat_long",
     start_date=datetime(2021, 9, 13),
     schedule="0 0 2 * *", # every month (day 2, 00:00)
-    max_active_runs=2,
+    max_active_runs=1,
     tags=['ODIGODI', 'Officetel'],
     catchup=False,
     default_args={
@@ -129,6 +129,7 @@ with DAG(
     
     rows = extract_address(schema, table)
     data = extract_lat_long(rows, url, key)
+
     table = "latlong"
     load(schema, table, data)
 
