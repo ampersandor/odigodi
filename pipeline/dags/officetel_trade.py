@@ -19,7 +19,7 @@ def _create_table(cur, schema, table, drop_first):
     if drop_first:
         cur.execute(f"DROP TABLE IF EXISTS {schema}.{table};")
     query = f"""
-        CREATE TABLE IF NOT EXISTS {dbname}.{table} (
+        CREATE TABLE IF NOT EXISTS {schema}.{table} (
             upload_date DATE DEFAULT CURRENT_DATE,
             upload_time TIME DEFAULT CURRENT_TIME,
             trade_ymd DATE,
@@ -113,7 +113,7 @@ with DAG(
     start_date=datetime(2021, 9, 13),
     schedule="0 0 1 * *", # every month (day 1, 00:00)
     max_active_runs=1,
-    tags=['ODIGODI', 'Officetel'],
+    tags=['ODIGODI', 'officetel', "ETL"],
     catchup=False,
     default_args={
         "retries": 0,
@@ -121,9 +121,9 @@ with DAG(
         "on_failure_callback" : slack.on_failure_callback
     }
 ) as dag:
-    dbname = "officetel"
+    schema = "officetel"
     table = "trade"
     dong_code = {"방이동": "11710"} # https://www.code.go.kr/stdcode/regCodeL.do
     url = Variable.get("data_portal_url_trade")
     key = Variable.get("data_portal_api_key")
-    load(dbname, table, transform(extract(url, key, dong_code["방이동"])))
+    load(schema, table, transform(extract(url, key, dong_code["방이동"])))

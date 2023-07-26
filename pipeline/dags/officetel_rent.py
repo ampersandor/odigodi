@@ -113,7 +113,7 @@ with DAG(
     start_date=datetime(2021, 9, 13),
     schedule="0 0 1 * *", # every month (day 1, 00:00)
     max_active_runs=1,
-    tags=['ODIGODI', 'Officetel'],
+    tags=['ODIGODI', 'officetel', "ETL"],
     catchup=False,
     default_args={
         "retries": 0,

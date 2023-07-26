@@ -1,5 +1,4 @@
 import logging
-import xml.etree.ElementTree as ET
 from datetime import datetime
 from datetime import timedelta
 
@@ -10,7 +9,6 @@ import json
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
-from airflow.operators.python import get_current_context
 from airflow.hooks.postgres_hook import PostgresHook
 
 from plugins import slack
@@ -72,6 +70,7 @@ def extract_lat_long(rows, url, key, city="서울특별시"):
             response = requests.get(api, headers=headers)
             response.raise_for_status()
             api_json = json.loads(str(response.text))
+            logging.info(api_json)
             if not api_json["documents"]:
                 logging.warning(f"the {api} has no data for {address}, skipping it. \n {api_json}")
                 continue
@@ -113,7 +112,7 @@ with DAG(
     start_date=datetime(2021, 9, 13),
     schedule="0 0 2 * *", # every month (day 2, 00:00)
     max_active_runs=1,
-    tags=['ODIGODI', 'Officetel'],
+    tags=['ODIGODI', 'officetel', "ETL"],
     catchup=False,
     default_args={
         "retries": 0,

@@ -3,23 +3,13 @@ SELECT name, area, AVG(deposite) AS average_deposit FROM (   SELECT name, area, 
 BY trade_ymd DESC) AS rn   FROM rent   WHERE dong = '방이동' AND monthly_pay = 0 ) subquery WHERE rn <= 30 GROUP BY name, area;
 """
 
-"""
-
-
-"""
 import logging
-import xml.etree.ElementTree as ET
 from datetime import datetime
-from datetime import timedelta
 
 import psycopg2
 
-import mysql.connector
-from mysql.connector import errorcode
 from airflow import DAG
-from airflow.models import Variable
 from airflow.decorators import task
-from airflow.operators.python import get_current_context
 from airflow.hooks.postgres_hook import PostgresHook
 
 from plugins import slack
@@ -63,7 +53,7 @@ with DAG(
     schedule = '@once',
     catchup = False,
     max_active_runs=1,
-    tags=['ODIGODI', 'Officetel', 'ELT'],
+    tags=['ODIGODI', 'prod', 'ELT'],
     default_args={
         "retries": 0,
         "on_failure_callback" : slack.on_failure_callback
