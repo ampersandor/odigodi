@@ -2,7 +2,6 @@ const db = require("../models");
 const Location = db.location;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Tutorial
 exports.create = (req, res) => {
   // Validate request
   if (!req.body.title) {
@@ -18,7 +17,6 @@ exports.create = (req, res) => {
     lng: req.body.lng
   };
 
-  // Save Tutorial in the database
   Location.create(location)
     .then(data => {
       res.send(data);
@@ -26,7 +24,7 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Tutorial."
+          err.message || "Some error occurred while creating the Location."
       });
     });
 };
