@@ -12,7 +12,8 @@ module.exports = {
   }
 };
 
-// config/db.config.js ->
-// models/location.model.js -> models/index.js
+// config/db.config.js 
+// models/location.model.js
+// models/index.js
 // controllers/locatin.controller.js
 // routes/location.routes.js

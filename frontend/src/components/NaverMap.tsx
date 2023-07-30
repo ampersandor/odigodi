@@ -4,16 +4,19 @@ import Modal from './Modal';
 import { useState, useCallback } from "react";
 import ILocationData from "../types/location.type"
 
+
 interface NaverMapProps {
   data: ILocationData[]
 }
 
+ 
 const NaverMap: React.FC<NaverMapProps> = (props) => {
+  console.log("l-> NaverMap is rendered!")
   const { data } = props;
-  console.log(data)
   const mapElement = useRef(null);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
- 
+  const [name, setName] = useState<string>("defaultString");
+
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
   }, [isOpenModal]);
@@ -35,11 +38,10 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
 
     const map = new naver.maps.Map(mapElement.current, mapOptions);
     data.forEach((value, key) => {
-      console.log(value.lat);
       var marker = new naver.maps.Marker({
         map: map,
         position: new naver.maps.LatLng(value.lng, value.lat),
-        title: key
+        title: value.name
       })
       var infoWindow = new naver.maps.InfoWindow({
         content: '<div style="width:100px;text-align:center;padding:5px;"><b>"'+ value.name +'"</b></div>'
@@ -48,11 +50,10 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
       infoWindows.push(infoWindow)
     });
     
-    function getClickHandler(seq: any) {
+    function getHoverHandler(seq: any) {
       return function(e: any) {
           var marker = markers[seq],
               infoWindow = infoWindows[seq];
-  
           if (infoWindow.getMap()) {
               infoWindow.close();
           } else {
@@ -60,21 +61,24 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
           }
       }
     }
-    
+
     for (var i=0, ii=markers.length; i<ii; i++) {
         naver.maps.Event.addListener(markers[i], 'click', onClickToggleModal);
-        naver.maps.Event.addListener(markers[i], 'mouseover', getClickHandler(i));
-        naver.maps.Event.addListener(markers[i], "mouseout", getClickHandler(i)); 
-      }
+        naver.maps.Event.addListener(markers[i], 'click', function (i:any) {console.log("you clicked " + i.overlay.title)
+            setName(i.overlay.title);
+        });
+        naver.maps.Event.addListener(markers[i], 'mouseover', getHoverHandler(i));
+        naver.maps.Event.addListener(markers[i], "mouseout", getHoverHandler(i)); 
+    }
   }, [data]);
 
   return (
         <>
-          {isOpenModal && (
+          {isOpenModal &&
               <Modal onClickToggleModal={onClickToggleModal}>
-                <LineGraph/>
+                <LineGraph name={name} />
               </Modal>
-          )}
+          }
           <div ref={mapElement} style={{ minHeight: '800px' }} />;
         </>
   )

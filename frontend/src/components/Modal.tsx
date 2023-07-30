@@ -4,17 +4,14 @@ interface ModalDefaultType {
   onClickToggleModal: () => void;
 }
 
-function Modal({
-  onClickToggleModal,
-  children,
-}: PropsWithChildren<ModalDefaultType>) {
+function Modal({onClickToggleModal, children}: PropsWithChildren<ModalDefaultType>) {
+  console.log("l-> Modal is rendered")
   return (
     <ModalContainer>
       <DialogBox>{children}</DialogBox>
       <Backdrop
         onClick={(e: React.MouseEvent) => {
           e.preventDefault();
-
           if (onClickToggleModal) {
             onClickToggleModal();
           }
@@ -36,7 +33,7 @@ const ModalContainer = styled.div`
 
 const DialogBox = styled.dialog`
   width: 800px;
-  height: 400px;
+  height: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
