@@ -23,6 +23,7 @@
     padding: 0.5vw 0.7vw;
     margin: 0 0.5vw;
     text-decoration: none;
+    align-items: start;
     cursor: pointer;
     &:hover {
       background-color: rgba(153, 178, 218, 0.5);
@@ -30,7 +31,12 @@
   }
   .icon {
     display: flex;
-    align-items: start;
+    justify-content: flex-start;
+    width: 100px;
+  }
+  .lo {
+      justify-content: flex-start;
+      width: 100%;
     }
   .desktopitems {
     .link {

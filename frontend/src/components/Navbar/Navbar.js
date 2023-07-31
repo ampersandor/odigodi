@@ -30,15 +30,15 @@ const Navbar = () => {
               key={"Home"}>
           <h2 className={styles.logo}>Odisaldi</h2>
         </NavLink>
-        <div className={styles.icon}>
-          <Lottie
-                options={defaultOptions}
-                height='10%'
-                width='10%'
-                isStopped={false}
-                isPaused={false} />
+        <div className={styles.lo}>
+          <div className={styles.icon}>
+            <Lottie
+              options={defaultOptions}
+              isStopped={false}
+              isPaused={false}
+            />
+          </div>
         </div>
-        
         <div className={styles.desktopitems}>
           {LinksData.map((link) => (
             <NavLink

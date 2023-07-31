@@ -79,7 +79,7 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
                 <LineGraph name={name} />
               </Modal>
           }
-          <div ref={mapElement} style={{ minHeight: '800px' }} />;
+          <div ref={mapElement} style={{ height:"100vh" }} />;
         </>
   )
 }
