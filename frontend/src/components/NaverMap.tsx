@@ -44,7 +44,7 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
         title: value.name
       })
       var infoWindow = new naver.maps.InfoWindow({
-        content: '<div style="width:100px;text-align:center;padding:5px;"><b>"'+ value.name +'"</b></div>'
+        content: '<div style="width:100px;text-align:center;padding:5px;"><b>'+ value.name +'</b></div>'
       });
       markers.push(marker)
       infoWindows.push(infoWindow)

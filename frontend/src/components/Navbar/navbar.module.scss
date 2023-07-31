@@ -8,22 +8,25 @@
   height: $navbarheight;
   width: 100%;
   padding: 0 1vw;
-  // background-color: #dbecff;
   background: $primarylight;
-  // box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   z-index: 10;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  // border-bottom: 2px solid #000000e7;
 
   .logo {
-    font-family: 'Georgia';
-    font-size: 2rem;
-    letter-spacing: 0.01vw;
-    cursor: pointer;
     color: $lightwhite;
-    transition: all 0.3s ease;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    padding: 0.5vw 0.7vw;
+    margin: 0 0.5vw;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(153, 178, 218, 0.5);
+    }
   }
   .icon {
     display: flex;
@@ -41,9 +44,8 @@
       letter-spacing: 1px;
       border-radius: 4px;
       transition: 0.3s all ease-in-out;
-
       &:hover {
-        background-color: rgba(33, 80, 156, 0.5);
+        background-color:  rgba(240, 234, 165, 0.5);
       }
     }
   }
@@ -53,16 +55,11 @@
       position: absolute;
       right: 3vw;
       top: 12.9px;
-      // background-color: rgba(0, 0, 0, 0.06);
       padding: 6px 7px 4px 7px;
       border-radius: 10px;
       cursor: pointer;
       transform: scale(1);
       transition: 0.3s all ease-in-out;
-
-      // &:hover {
-      //   background-color: rgba(0, 0, 0, 0.08);
-      // }
     }
 
     .active {

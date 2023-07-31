@@ -36,7 +36,9 @@ type trans_trade = {
   price: number;
 }
 
-
+function timeout(delay: number) {
+  return new Promise( res => setTimeout(res, delay) );
+}
 
 const LineGraph: FunctionComponent<Props> = ({name})  =>{
   console.log("l-> LineGraph is rendered with: " + name);
@@ -81,7 +83,6 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
         }, {});
         setTrades(sortedTradesObject);
         console.log("From Backend, retrieved Trades");
-        setTimeout(() => {  }, 1000);
       })
       .catch((e: Error) => {
         console.log(e);

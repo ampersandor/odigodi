@@ -25,8 +25,11 @@ const Navbar = () => {
   return (
     <>
       <div className={styles.navbar}>
-        
-        <h2 className={styles.logo}>Odisaldi</h2>
+        <NavLink
+              to={"/"}
+              key={"Home"}>
+          <h2 className={styles.logo}>Odisaldi</h2>
+        </NavLink>
         <div className={styles.icon}>
           <Lottie
                 options={defaultOptions}
@@ -45,7 +48,7 @@ const Navbar = () => {
               style={({ isActive }) =>
                 isActive
                   ? {
-                      background: "rgb(68 68 68 / 55%)",
+                      background: "rgb(240 234 165 / 55%)",
                       borderBottom: "3px solid rgba(40, 40, 40, 0.67",
                     }
                   : { color: "white" }
