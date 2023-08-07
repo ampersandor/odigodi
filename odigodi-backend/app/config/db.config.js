@@ -1,8 +1,9 @@
 module.exports = {
-  HOST: "localhost",
-  USER: "airflow",
-  PASSWORD: "airflow",
-  DB: "odigodi",
+  HOST: process.env.psql_host,
+  USER: process.env.psql_user,
+  PORT: process.env.psql_port,
+  PASSWORD: process.env.psql_pwd,
+  DB: process.env.psql_db,
   dialect: "postgres",
   pool: {
     max: 5,
@@ -12,6 +13,8 @@ module.exports = {
   }
 };
 
+console.log(process.env.psql_host)
+console.log(process.env.psql_port)
 // config/db.config.js 
 // models/location.model.js
 // models/index.js

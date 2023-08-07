@@ -33,7 +33,6 @@ const ModalContainer = styled.div`
 
 const DialogBox = styled.dialog`
   width: 800px;
-  height: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,6 +42,11 @@ const DialogBox = styled.dialog`
   box-sizing: border-box;
   background-color: white;
   z-index: 10000;
+
+  @media (max-width: 767px) {
+    /* For screens with a maximum width of 767px (mobile devices) */
+    width: 95%;
+  }
 `;
 
 const Backdrop = styled.div`

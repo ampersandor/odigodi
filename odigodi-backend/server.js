@@ -3,10 +3,21 @@ const cors = require("cors");
 
 const app = express();
 
-// var corsOptions = {
-//   origin: "http://localhost:8081"
+// const allowedOrigins = [
+//   "https://web-odigodi-frontend-ac2nlkqcdiye.sel4.cloudtype.app",
+//   "http://localhost:3000"
+//   // Add other allowed origins here if needed
+// ];
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true, // Allow credentials, if required by your use case.,
 // };
-// app.use(cors(corsOptions));
 
 app.use(cors());
 

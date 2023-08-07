@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
   Title, Tooltip, Legend, TimeScale} from 'chart.js';
-import { Chart } from 'react-chartjs-2';
+import { Chart, Line } from 'react-chartjs-2';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import RentDataService from "../services/rent.service";
@@ -11,6 +11,7 @@ import 'chartjs-adapter-date-fns';
 import lottieData from "../static/find.json";
 import Lottie from "react-lottie";
 import React from 'react'
+import './linegraph.css'
 ChartJS.register(
   CategoryScale, LinearScale, PointElement, LineElement, 
   Title, Tooltip, Legend, TimeScale
@@ -129,7 +130,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
               <Tab key={rentKey} eventKey={rentKey} title={`${rentKey}m\xB2`} />
             ))}
           </Tabs>
-            <Chart type='line' data={
+            <Line data={
               {
                 datasets: [
                   {
