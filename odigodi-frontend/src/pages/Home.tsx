@@ -1,9 +1,7 @@
-import { Component, ChangeEvent } from "react";
+import { Component } from "react";
 import LocationDataService from "../services/location.service";
 import ILocationData from "../types/location.type";
 import NaverMap from "../components/NaverMap";
-import ITradeData from '../types/trade.type';
-import IRentData from '../types/rent.type';
 
 
 type Props = {};

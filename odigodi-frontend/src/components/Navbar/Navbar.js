@@ -28,7 +28,7 @@ const Navbar = () => {
         <NavLink
               to={"/"}
               key={"Home"}>
-          <h2 className={styles.logo}>Odisaldi</h2>
+          <h2 className={styles.logo}>Odigodi</h2>
         </NavLink>
         <div className={styles.lo}>
           <div className={styles.icon}>

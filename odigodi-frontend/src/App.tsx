@@ -1,7 +1,6 @@
 import { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import NaverMap from "./components/NaverMap";
 import Navbar from "./components/Navbar/Navbar";
 import { Routes, Route } from "react-router-dom";
 import Contact from "./pages/Contact/Contact";

@@ -16,6 +16,7 @@
     "chart.js": "^4.3.0",
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^2.30.0",
+    "email-js": "^2.0.2",
     "faker": "5.5.3",
     "framer-motion": "^10.13.1",
     "react": "^18.2.0",

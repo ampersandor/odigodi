@@ -29,10 +29,10 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
     const mapOptions: naver.maps.MapOptions = {
       center: location,
       zoom: 18,
-      zoomControl: true,
-      zoomControlOptions: {
-        position: naver.maps.Position.TOP_RIGHT,
-      },
+      // zoomControl: true,
+      // zoomControlOptions: {
+      //   position: naver.maps.Position.TOP_RIGHT,
+      // },
     };
     var markers: any = [], infoWindows: any = [];
 
