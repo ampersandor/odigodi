@@ -1,32 +1,39 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Lottie from "react-lottie";
 
 import { pageVariants, pageTransition } from "../../css/FramerAnimation";
 import styles from "./contact.module.scss";
 import lottieData from "../../static/lottie_email.json";
+import emailjs from '@emailjs/browser';
+import Modal from "../../components/Modal"
 
 const contactOpen = "<Contact />";
 
 const Contact = () => {
-  const [contactData, setContactData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
 
-  const handleOnchange = (e) => {
-    setContactData({ ...contactData, [e.target.name]: e.target.value });
+  const form = useRef();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false); // Close the success modal
   };
 
+  const handleErrorModalClose = () => {
+    setShowErrorModal(false); // Close the error modal
+  };
   const handleOnsubmit = (e) => {
     e.preventDefault();
-    console.log(contactData);
-    setContactData({
-      name: "",
-      email: "",
-      message: "",
+    emailjs.sendForm('service_c1soo1a', 'template_tlxuxog', form.current, 'cq2gfGUlSovhV5brP')
+    .then((result) => {
+        // show the user a success message
+        setShowSuccessModal(true);
+        form.current.reset();
+    }, (error) => {
+        // show the user an error
+        setShowErrorModal(true);
     });
+
   };
 
   const defaultOptions = {
@@ -50,22 +57,18 @@ const Contact = () => {
       >
         <div className={styles.form}>
           <h3 className={styles.contactOpen}>{contactOpen}</h3>
-          <form onSubmit={handleOnsubmit}>
+          <form ref={form} onSubmit={handleOnsubmit}>
             <input
               type='text'
-              name='name'
+              name='from_name'
               placeholder='Name'
               required
-              value={contactData.name}
-              onChange={handleOnchange}
             />
             <input
               type='email'
-              name='email'
+              name='from_email'
               placeholder='Email'
               required
-              value={contactData.email}
-              onChange={handleOnchange}
             />
             <textarea
               name='message'
@@ -73,8 +76,6 @@ const Contact = () => {
               rows={5}
               placeholder='Your Message'
               required
-              value={contactData.message}
-              onChange={handleOnchange}
             ></textarea>
             <button type='submit'>Send</button>
           </form>
@@ -89,6 +90,20 @@ const Contact = () => {
           />
         </div>
       </motion.div>
+      {showSuccessModal &&
+        <Modal onClickToggleModal={handleSuccessModalClose}>
+          <h2>Success!</h2>
+          <p>Your message has been sent successfully.</p>
+          <button onClick={handleSuccessModalClose}>Close</button>
+        </Modal>
+      }
+      {showErrorModal &&
+        <Modal onClickToggleModal={handleErrorModalClose}>
+          <h2>Success!</h2>
+          <p>Your message has been sent successfully.</p>
+          <button onClick={handleErrorModalClose}>Close</button>
+        </Modal>
+      }
     </div>
   );
 };
