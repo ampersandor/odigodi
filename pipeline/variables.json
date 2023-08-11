@@ -1,7 +1,0 @@
-{
-    "data_portal_api_key": "xMyanQsD40mm9hbV32bxAFVfWWncnj8oagY5e1JBcjieytrmknOy5aXGDbRVu%2B9EN2kXxvOP7kzHQg0NgKZabQ%3D%3D",
-    "data_portal_url_rent": "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
-    "data_portal_url_trade": "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiTrade",
-    "kakao_map_url": "https://dapi.kakao.com/v2/local/search/address.json",
-    "kakao_map_key": "01f0c59df4b49e2643b17bd723cb2166"
-}

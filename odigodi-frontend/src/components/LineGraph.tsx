@@ -45,6 +45,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
   console.log("l-> LineGraph is rendered with: " + name);
   const [rents, setRents] = useState<Map<string, Array<trans_rent>>>();
   const [trades, setTrades] = useState<Map<string, Array<trans_trade>>>();
+  const [sortedKeys, setSortedKeys] = useState(Array<string>); // State for storing the sorted keys
   const [selectedTab, setSelectedTab] = useState<string>();
 
   const options = { 
@@ -64,6 +65,17 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
       y: { title: { display: false }, ticks: { color: "black", autoSkip: true}, },
     } 
   };
+  useEffect(() => {
+    if(rents && trades){
+      console.log("sort selected keys")
+      const allKeys = [...Object.keys(rents), ...Object.keys(trades)];
+      const uniqueKeys = Array.from(new Set(allKeys));
+      const sortedKeys = uniqueKeys.sort();
+
+      setSortedKeys(sortedKeys); // Store the sorted keys in state
+      setSelectedTab(sortedKeys[0]);
+    }
+  }, [rents, trades]);
 
   useEffect(() => {
     TradeDataService.get(name)
@@ -83,42 +95,39 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
             return sortedObj
         }, {});
         setTrades(sortedTradesObject);
-        console.log("From Backend, retrieved Trades");
+        console.log("From Backend, retrieved Trades:" + sortedTradesObject);
       })
       .catch((e: Error) => {
         console.log(e);
       });
-    }, [])
 
-  useEffect(() => {
-      RentDataService.get(name)
-        .then((response: any) => {
-          var rents = new Map<string, Array<trans_rent>>();
-          response.data.forEach((value: any, key: any) => {           
-            if(rents.has(value.area)){
-              rents.get(value.area)?.push({x: value.trade_ymd, y: value.deposite})
-            }
-            else{
-              rents.set(value.area, [{x: value.trade_ymd, y: value.deposite}])
-            }
-          })
-          const rentsObject = Object.fromEntries(rents?.entries() || []);
-          const sortedRentsObject = Object.keys(rentsObject).sort().reduce((sortedObj, key) => {
-              sortedObj[key] = rentsObject[key];
-              return sortedObj
-          }, {});
-          setRents(sortedRentsObject);
-          setSelectedTab(Object.keys(sortedRentsObject)[0]);
-          console.log("From Backend, retrieved Rents");
+    RentDataService.get(name)
+      .then((response: any) => {
+        var rents = new Map<string, Array<trans_rent>>();
+        response.data.forEach((value: any, key: any) => {           
+          if(rents.has(value.area)){
+            rents.get(value.area)?.push({x: value.trade_ymd, y: value.deposite})
+          }
+          else{
+            rents.set(value.area, [{x: value.trade_ymd, y: value.deposite}])
+          }
         })
-        .catch((e: Error) => {
-          console.log(e);
-        });
-  }, []);
+        const rentsObject = Object.fromEntries(rents?.entries() || []);
+        const sortedRentsObject = Object.keys(rentsObject).sort().reduce((sortedObj, key) => {
+            sortedObj[key] = rentsObject[key];
+            return sortedObj
+        }, {});
+        setRents(sortedRentsObject);
+        console.log("From Backend, retrieved Rents");
+      })
+      .catch((e: Error) => {
+        console.log(e);
+      });
+    }, []);
 
   return (
         <>
-        {(rents && trades) ? 
+        {(rents && trades && sortedKeys) ? 
         <React.Fragment>
           <Tabs
             transition={false}
@@ -126,8 +135,8 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
             className="mb-3"
             onSelect={(tabKey) => setSelectedTab(tabKey)} // Update the selectedTab state when a new tab is selected          
           >
-            {Object.keys(rents).map((rentKey) => (
-              <Tab key={rentKey} eventKey={rentKey} title={`${rentKey}m\xB2`} />
+            {Object.values(sortedKeys).map((areaKey) => (
+              <Tab key={areaKey} eventKey={areaKey} title={`${areaKey}m\xB2`} />
             ))}
           </Tabs>
             <Line data={
