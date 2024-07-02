@@ -28,17 +28,17 @@ const Contact = () => {
   const handleOnsubmit = (e) => {
     setLoading(true);
     e.preventDefault();
-    emailjs.sendForm('service_c1soo1a', 'template_tlxuxog', form.current, 'cq2gfGUlSovhV5brP')
-    .then((result) => {
+    emailjs.sendForm('service_c1soo1a', 'template_tlxuxog', form.current, process.env.REACT_APP_EMAILJS_KEY)
+      .then((result) => {
         // show the user a success message
         setShowSuccessModal(true);
         form.current.reset();
         setLoading(false);
-    }, (error) => {
+      }, (error) => {
         // show the user an error
         setShowErrorModal(true);
         setLoading(false);
-    });
+      });
 
   };
 
@@ -105,33 +105,33 @@ const Contact = () => {
         </div>
       </motion.div>
       {isLoading &&
-      <Rottie>
-        <Lottie
-         background-color="#99999"
-         options={planeOptions}
-         height="50%"
-         width="50%"
-         isStopped={false}
-         isPaused={false}
-        />
-       </Rottie>
+        <Rottie>
+          <Lottie
+            background-color="#99999"
+            options={planeOptions}
+            height="50%"
+            width="50%"
+            isStopped={false}
+            isPaused={false}
+          />
+        </Rottie>
       }
       {showSuccessModal &&
-          <SuccessBox>
-            <h2>Success!</h2>
-            <p>Your message has been sent successfully.</p>
-            <button style={{
-              "outline": "none",
-              "border": "none",
-              "border-radius": "5px",
-              "background-color": "#3c83f3",
-              "font-size": "1rem",
-              "font-weight": "500",
-              "color": "#fff",
-              "cursor": "pointer",
-              "box-shadow": "0 4px 8px 0 rgba(128, 128, 128, 0.4)"
-            }} onClick={handleSuccessModalClose}>Close</button>
-          </SuccessBox>
+        <SuccessBox>
+          <h2>Success!</h2>
+          <p>Your message has been sent successfully.</p>
+          <button style={{
+            "outline": "none",
+            "border": "none",
+            "border-radius": "5px",
+            "background-color": "#3c83f3",
+            "font-size": "1rem",
+            "font-weight": "500",
+            "color": "#fff",
+            "cursor": "pointer",
+            "box-shadow": "0 4px 8px 0 rgba(128, 128, 128, 0.4)"
+          }} onClick={handleSuccessModalClose}>Close</button>
+        </SuccessBox>
       }
       {showErrorModal &&
         <Modal onClickToggleModal={handleErrorModalClose}>
