@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 module.exports = {
   HOST: process.env.psql_host,
   USER: process.env.psql_user,
