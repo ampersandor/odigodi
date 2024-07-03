@@ -1,5 +1,10 @@
 ## Odigodi 1.0.0
 
+This project is designed to provide hands-on experience with both ELT (Extract, Load, Transform) and ETL (Extract, Transform, Load) processes using Apache Airflow. By engaging with this project, participants will enhance their skills as data engineers, gaining practical knowledge and proficiency in managing complex data workflows.
+
+![image](https://github.com/ampersandor/odigodi/assets/57800485/a7c8676e-e79f-4723-8e25-5ad4b5468eb0)
+
+
 <details>
     <summary>Table of content</summary>
 
