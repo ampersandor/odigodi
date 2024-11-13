@@ -1,19 +1,19 @@
 module.exports = (sequelize, Sequelize) => {
-    const Trade = sequelize.define("trade", {
+    const Trade = sequelize.define("officetel_trade", {
       trade_ymd: {
         type: Sequelize.DATE
       },
-      name: {
+      offinm: {
         type: Sequelize.STRING,
       },
-      area: {
+      excluusear: {
         type: Sequelize.FLOAT
       },
-      price: {
-        type: Sequelize.FLOAT
+      dealamount: {
+        type: Sequelize.INTEGER
       }
     });
-    Trade.removeAttribute('id');
+    // Trade.removeAttribute('id');
   
     return Trade;
   };

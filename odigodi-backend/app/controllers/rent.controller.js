@@ -4,9 +4,9 @@ const Op = db.Sequelize.Op;
 
 
 exports.findByName = (req, res) => {
-  const name = req.params.name;
+  const offinm = req.params.name;
 
-  var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
+  var condition = offinm ? { offinm: { [Op.iLike]: `%${offinm}%` } } : null;
   
   Rent.findAll({ where: condition })
     .then(data => {

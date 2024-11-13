@@ -17,8 +17,6 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   }
 });
 
-console.log(dbConfig.PORT)
-
 const db = {};
 
 db.Sequelize = Sequelize;

@@ -41,10 +41,10 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
       var marker = new naver.maps.Marker({
         map: map,
         position: new naver.maps.LatLng(value.lng, value.lat),
-        title: value.name
+        title: value.offinm
       })
       var infoWindow = new naver.maps.InfoWindow({
-        content: '<div style="width:100px;text-align:center;padding:5px;"><b>'+ value.name +'</b></div>'
+        content: '<div style="width:100px;text-align:center;padding:5px;"><b>'+ value.offinm +'</b></div>'
       });
       markers.push(marker)
       infoWindows.push(infoWindow)

@@ -14,11 +14,3 @@ module.exports = {
     idle: 10000
   }
 };
-
-console.log(process.env.psql_host)
-console.log(process.env.psql_port)
-// config/db.config.js 
-// models/location.model.js
-// models/index.js
-// controllers/locatin.controller.js
-// routes/location.routes.js

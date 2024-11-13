@@ -30,11 +30,11 @@ interface Props {
 }
 type trans_rent = {
   trade_ymd: string;
-  deposite: number;
+  deposit: number;
 };
 type trans_trade = {
   trade_ymd: string;
-  price: number;
+  dealamount: number;
 }
 
 function timeout(delay: number) {
@@ -82,11 +82,11 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
       .then((response: any) => {
         var trades = new Map<string, Array<trans_trade>>();
         response.data.forEach((value: any, key: any) => {           
-          if(trades.has(value.area)){
-            trades.get(value.area)?.push({x: value.trade_ymd, y: value.price})
+          if(trades.has(value.excluusear)){
+            trades.get(value.excluusear)?.push({x: value.trade_ymd, y: value.dealamount})
           }
           else{
-            trades.set(value.area, [{x: value.trade_ymd, y: value.price}])
+            trades.set(value.excluusear, [{x: value.trade_ymd, y: value.dealamount}])
           }
         })
         const tradesObject = Object.fromEntries(trades?.entries() || []);
@@ -95,7 +95,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
             return sortedObj
         }, {});
         setTrades(sortedTradesObject);
-        console.log("From Backend, retrieved Trades:" + sortedTradesObject);
+        console.log("From Backend, retrieved Trades:", sortedTradesObject);
       })
       .catch((e: Error) => {
         console.log(e);
@@ -105,11 +105,11 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
       .then((response: any) => {
         var rents = new Map<string, Array<trans_rent>>();
         response.data.forEach((value: any, key: any) => {           
-          if(rents.has(value.area)){
-            rents.get(value.area)?.push({x: value.trade_ymd, y: value.deposite})
+          if(rents.has(value.excluusear)){
+            rents.get(value.excluusear)?.push({x: value.trade_ymd, y: value.deposit})
           }
           else{
-            rents.set(value.area, [{x: value.trade_ymd, y: value.deposite}])
+            rents.set(value.excluusear, [{x: value.trade_ymd, y: value.deposit}])
           }
         })
         const rentsObject = Object.fromEntries(rents?.entries() || []);
@@ -118,7 +118,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
             return sortedObj
         }, {});
         setRents(sortedRentsObject);
-        console.log("From Backend, retrieved Rents");
+        console.log("From Backend, retrieved Rents", sortedRentsObject);
       })
       .catch((e: Error) => {
         console.log(e);

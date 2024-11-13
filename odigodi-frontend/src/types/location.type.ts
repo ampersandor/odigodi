@@ -1,5 +1,6 @@
 export default interface ILocationData {
-  name: string,
+  id: number,
+  offinm: string,
   lat: number,
   lng: number,
 }

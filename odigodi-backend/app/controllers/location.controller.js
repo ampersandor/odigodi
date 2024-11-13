@@ -12,7 +12,7 @@ exports.create = (req, res) => {
   }
 
   const location = {
-    name: req.body.name,
+    offinm: req.body.offinm,
     lat: req.body.lat,
     lng: req.body.lng
   };
@@ -30,10 +30,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  const name = req.query.name;
-  var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
-
-  Location.findAll({ where: condition })
+  Location.findAll()
     .then(data => {
       res.send(data);
     })
