@@ -6,6 +6,7 @@ export interface TradeAttributes {
   excluusear: number;
   dealamount: number;
   floor: number;
+  location_id: string;
 }
 
 export interface TradeModel extends Model<TradeAttributes>, TradeAttributes {}
@@ -26,6 +27,9 @@ const initTradeModel = (sequelize: Sequelize): ModelStatic<TradeModel> => {
     },
     floor: {
       type: DataTypes.INTEGER
+    },
+    location_id: {
+      type: DataTypes.STRING
     }
   });
 

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import rentService from "../services/rentService";
+import tradeService from "../services/tradeService";
 
-class RentController {
+class TradeController {
     async findByName(req: Request, res: Response): Promise<void> {
         const { name } = req.params;
         try {
-            const data = await rentService.findByName(name);
+            const data = await tradeService.findByName(name);
             if (data) {
                 res.send({
                     success: true,
@@ -14,16 +14,16 @@ class RentController {
             } else {
                 res.status(404).send({
                     success: false,
-                    message: `Rent with name=${name} was not found`
+                    message: `Trade with name=${name} was not found`
                 });
             }
         } catch (error) {
             res.status(500).send({
                 success: false,
-                message: error instanceof Error ? error.message : "Error occurred while retrieving rent."
+                message: error instanceof Error ? error.message : "Error occurred while retrieving trade."
             });
         }
-    }
+    } 
 }
 
-export default new RentController();
+export default new TradeController();
