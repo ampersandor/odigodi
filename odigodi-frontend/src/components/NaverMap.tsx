@@ -37,6 +37,7 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
     var markers: any = [], infoWindows: any = [];
 
     const map = new naver.maps.Map(mapElement.current, mapOptions);
+    console.log(data);
     data.forEach((value, key) => {
       var marker = new naver.maps.Marker({
         map: map,

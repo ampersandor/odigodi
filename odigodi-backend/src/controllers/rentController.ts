@@ -4,6 +4,7 @@ import rentService from "../services/rentService";
 class RentController {
     async findByName(req: Request, res: Response): Promise<void> {
         const { name } = req.params;
+        console.log(name);
         try {
             const data = await rentService.findByName(name);
             if (data) {

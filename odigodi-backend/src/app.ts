@@ -3,8 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import locationRoutes from "./routes/locationRoutes";
-// import tradeRoutes from "./routes/trade.routes";
-// import rentRoutes from "./routes/rent.routes";
+import tradeRoutes from "./routes/tradeRoutes";
+import rentRoutes from "./routes/rentRoutes";
 
 class App {
   public app: Application;
@@ -69,9 +69,9 @@ class App {
     });
 
     // API routes
-    this.app.use("/api/locations", locationRoutes);
-    // this.app.use("/api/trades", tradeRoutes);
-    // this.app.use("/api/rents", rentRoutes);
+    this.app.use("/api/location", locationRoutes);
+    this.app.use("/api/trade", tradeRoutes);
+    this.app.use("/api/rent", rentRoutes);
   }
 
   private initializeErrorHandling(): void {

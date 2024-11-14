@@ -27,9 +27,8 @@ export default class Home extends Component<Props, State>{
     LocationDataService.getAll()
       .then((response: any) => {
         this.setState({
-            locations: response.data
+            locations: response.data.data
         });
-        console.log(response.data);
       })
       .catch((e: Error) => {
         console.log(e);

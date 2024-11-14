@@ -81,7 +81,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
     TradeDataService.get(name)
       .then((response: any) => {
         var trades = new Map<string, Array<trans_trade>>();
-        response.data.forEach((value: any, key: any) => {           
+        response.data.data.forEach((value: any, key: any) => {           
           if(trades.has(value.excluusear)){
             trades.get(value.excluusear)?.push({x: value.trade_ymd, y: value.dealamount})
           }
@@ -104,7 +104,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
     RentDataService.get(name)
       .then((response: any) => {
         var rents = new Map<string, Array<trans_rent>>();
-        response.data.forEach((value: any, key: any) => {           
+        response.data.data.forEach((value: any, key: any) => {           
           if(rents.has(value.excluusear)){
             rents.get(value.excluusear)?.push({x: value.trade_ymd, y: value.deposit})
           }

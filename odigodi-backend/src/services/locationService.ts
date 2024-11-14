@@ -8,9 +8,7 @@ class LocationService {
    */
   async findAll(): Promise<LocationModel[]> {
     try {
-      return await db.location.findAll({
-        order: [['offinm', 'ASC']]  // 이름순 정렬
-      });
+      return await db.location.findAll();
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Failed to retrieve locations");
     }
