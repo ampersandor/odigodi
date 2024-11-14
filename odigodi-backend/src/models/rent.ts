@@ -7,6 +7,7 @@ export interface RentAttributes {
   deposit: number;
   floor: number;
   location_id: string;
+  monthlyrent: number;
 }
 
 export interface RentModel extends Model<RentAttributes>, RentAttributes {}
@@ -30,6 +31,9 @@ const initRentModel = (sequelize: Sequelize): ModelStatic<RentModel> => {
     },
     location_id: {
       type: DataTypes.STRING
+    },
+    monthlyrent: {
+      type: DataTypes.INTEGER
     }
   });
 
