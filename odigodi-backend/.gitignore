@@ -126,4 +126,4 @@ $RECYCLE.BIN/
 pids
 *.pid
 *.seed
-*.pid.lock
+*.pid.lockdist/
