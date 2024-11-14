@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import locationService from "../services/locationService";
-import { LocationAttributes } from "../models/location";
 import { validate as uuidValidate } from 'uuid';
 
 class LocationController {

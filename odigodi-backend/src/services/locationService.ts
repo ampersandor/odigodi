@@ -1,20 +1,8 @@
-import { LocationModel, LocationAttributes } from "../models/location";
+import { LocationModel } from "../models/location";
 
 import db from "../models";
 import { Op } from "sequelize";
 class LocationService {
-  /**
-   * 새로운 위치 생성
-   */
-  async create(locationData: LocationAttributes): Promise<LocationModel> {
-    try {
-      const location = await db.location.create(locationData);
-      return location;
-    } catch (error) {
-      throw new Error(error instanceof Error ? error.message : "Failed to create location");
-    }
-  }
-
   /**
    * 모든 위치 조회
    */

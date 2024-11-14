@@ -2,7 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
-import locationRoutes from "./routes/location.routes";
+import locationRoutes from "./routes/locationRoutes";
 // import tradeRoutes from "./routes/trade.routes";
 // import rentRoutes from "./routes/rent.routes";
 
