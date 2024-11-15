@@ -81,6 +81,7 @@ const LineGraph: FunctionComponent<Props> = ({name, location_id})  =>{
   useEffect(() => {
     TradeDataService.get(location_id)
       .then((response: any) => {
+        console.log("From Backend, retrieved Trades:", response.data.data);
         var trades = new Map<string, Array<trans_trade>>();
         response.data.data.forEach((value: any, key: any) => {           
           if(trades.has(value.excluusear)){
@@ -90,42 +91,41 @@ const LineGraph: FunctionComponent<Props> = ({name, location_id})  =>{
             trades.set(value.excluusear, [{x: value.trade_ymd, y: value.dealamount}])
           }
         })
-        const tradesObject = Object.fromEntries(trades?.entries() || []);
-        const sortedTradesObject = Object.keys(tradesObject).sort().reduce((sortedObj, key) => {
-            sortedObj[key] = tradesObject[key];
-            return sortedObj
-        }, {});
-        setTrades(sortedTradesObject);
-        console.log("From Backend, retrieved Trades:", sortedTradesObject);
+        const tradeObject = Object.fromEntries(trades);
+        setTrades(tradeObject);
       })
       .catch((e: Error) => {
         console.log(e);
       });
 
-    RentDataService.get(location_id)
+        RentDataService.get(location_id)
       .then((response: any) => {
-        var rents = new Map<string, Array<trans_rent>>();
         console.log("From Backend, retrieved Rents:", response.data.data);
-        response.data.data.forEach((value: any, key: any) => {           
+        const rents = new Map<string, Array<trans_rent>>();
+        
+        response.data.data.forEach((value: any) => {           
           if(rents.has(value.excluusear)){
-            rents.get(value.excluusear)?.push({x: value.trade_ymd, y: value.deposit})
+            rents.get(value.excluusear)?.push({
+              x: value.trade_ymd, 
+              y: value.deposit
+            })
+          } else {
+            rents.set(value.excluusear, [{
+              x: value.trade_ymd, 
+              y: value.deposit
+            }])
           }
-          else{
-            rents.set(value.excluusear, [{x: value.trade_ymd, y: value.deposit}])
-          }
-        })
-        const rentsObject = Object.fromEntries(rents?.entries() || []);
-        const sortedRentsObject = Object.keys(rentsObject).sort().reduce((sortedObj, key) => {
-            sortedObj[key] = rentsObject[key];
-            return sortedObj
-        }, {});
-        setRents(sortedRentsObject);
-        console.log("From Backend, retrieved Rents", sortedRentsObject);
+        });
+
+        // Map을 Object로 단순 변환
+        const rentsObject = Object.fromEntries(rents);
+        setRents(rentsObject);
+        console.log("Processed Rents:", rentsObject);
       })
       .catch((e: Error) => {
         console.log(e);
       });
-    }, []);
+  }, []);
 
   return (
         <>
