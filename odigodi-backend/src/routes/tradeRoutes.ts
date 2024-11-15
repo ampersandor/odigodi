@@ -3,6 +3,6 @@ import tradeController from "../controllers/tradeController";
 
 const router = Router();
 
-router.get("/:name", tradeController.findByName);
+router.get("/:location_id", tradeController.findByLocationId);
 
 export default router;  

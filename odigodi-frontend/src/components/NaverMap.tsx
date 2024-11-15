@@ -16,33 +16,30 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
   const mapElement = useRef(null);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [name, setName] = useState<string>("defaultString");
-
+  const [location_id, setLocationId] = useState<string>("defaultString");
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
   }, [isOpenModal]);
 
   useEffect(() => {
     const { naver } = window;
+
     if (!mapElement.current || !naver) return; 
 
     const location = new naver.maps.LatLng(37.516, 127.1123);
     const mapOptions: naver.maps.MapOptions = {
       center: location,
-      zoom: 18,
-      // zoomControl: true,
-      // zoomControlOptions: {
-      //   position: naver.maps.Position.TOP_RIGHT,
-      // },
+      zoom: 18
     };
     var markers: any = [], infoWindows: any = [];
 
     const map = new naver.maps.Map(mapElement.current, mapOptions);
-    console.log(data);
     data.forEach((value, key) => {
       var marker = new naver.maps.Marker({
         map: map,
         position: new naver.maps.LatLng(value.lng, value.lat),
-        title: value.offinm
+        title: value.offinm,
+        id: value.id
       })
       var infoWindow = new naver.maps.InfoWindow({
         content: '<div style="width:100px;text-align:center;padding:5px;"><b>'+ value.offinm +'</b></div>'
@@ -65,8 +62,9 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
 
     for (var i=0, ii=markers.length; i<ii; i++) {
         naver.maps.Event.addListener(markers[i], 'click', onClickToggleModal);
-        naver.maps.Event.addListener(markers[i], 'click', function (i:any) {console.log("you clicked " + i.overlay.title)
+        naver.maps.Event.addListener(markers[i], 'click', function (i:any) {console.log("you clicked " + i.overlay.id)
             setName(i.overlay.title);
+            setLocationId(i.overlay.id);
         });
         naver.maps.Event.addListener(markers[i], 'mouseover', getHoverHandler(i));
         naver.maps.Event.addListener(markers[i], "mouseout", getHoverHandler(i)); 
@@ -77,7 +75,7 @@ const NaverMap: React.FC<NaverMapProps> = (props) => {
         <>
           {isOpenModal &&
               <Modal onClickToggleModal={onClickToggleModal}>
-                <LineGraph name={name} />
+                <LineGraph name={name} location_id={location_id} />
               </Modal>
           }
           <div ref={mapElement} style={{ height:"100vh" }} />;

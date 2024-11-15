@@ -3,6 +3,6 @@ import rentController from "../controllers/rentController";
 
 const router = Router();
 
-router.get("/:name", rentController.findByName);
+router.get("/:location_id", rentController.findByLocationId);
 
 export default router;  

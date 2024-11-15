@@ -27,6 +27,7 @@ const defaultOptions = {
 
 interface Props {
   name: string;
+  location_id: string;
 }
 type trans_rent = {
   trade_ymd: string;
@@ -41,8 +42,8 @@ function timeout(delay: number) {
   return new Promise( res => setTimeout(res, delay) );
 }
 
-const LineGraph: FunctionComponent<Props> = ({name})  =>{
-  console.log("l-> LineGraph is rendered with: " + name);
+const LineGraph: FunctionComponent<Props> = ({name, location_id})  =>{
+  console.log("l-> LineGraph is rendered with: " + name + " and " + location_id);
   const [rents, setRents] = useState<Map<string, Array<trans_rent>>>();
   const [trades, setTrades] = useState<Map<string, Array<trans_trade>>>();
   const [sortedKeys, setSortedKeys] = useState(Array<string>); // State for storing the sorted keys
@@ -78,7 +79,7 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
   }, [rents, trades]);
 
   useEffect(() => {
-    TradeDataService.get(name)
+    TradeDataService.get(location_id)
       .then((response: any) => {
         var trades = new Map<string, Array<trans_trade>>();
         response.data.data.forEach((value: any, key: any) => {           
@@ -101,9 +102,10 @@ const LineGraph: FunctionComponent<Props> = ({name})  =>{
         console.log(e);
       });
 
-    RentDataService.get(name)
+    RentDataService.get(location_id)
       .then((response: any) => {
         var rents = new Map<string, Array<trans_rent>>();
+        console.log("From Backend, retrieved Rents:", response.data.data);
         response.data.data.forEach((value: any, key: any) => {           
           if(rents.has(value.excluusear)){
             rents.get(value.excluusear)?.push({x: value.trade_ymd, y: value.deposit})

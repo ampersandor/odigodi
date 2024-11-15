@@ -2,8 +2,8 @@ import http from "../http-common";
 import ITradeData from "../types/trade.type"
 
 class TradeDataService {
-  get(name: string) {
-    return http.get<ITradeData>(`/trade/${name}`);
+  get(location_id: string) {
+    return http.get<ITradeData>(`/trade/${location_id}`);
   }
 }
 
