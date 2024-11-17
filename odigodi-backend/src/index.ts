@@ -13,7 +13,7 @@ class ServerBootstrap {
   }
 
   private validateEnv(): void {
-    const requiredEnvVars = ['PORT', 'DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'];
+    const requiredEnvVars = ['DB_PORT', 'DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'];
     for (const envVar of requiredEnvVars) {
       if (!process.env[envVar]) {
         throw new Error(`Missing required environment variable: ${envVar}`);
