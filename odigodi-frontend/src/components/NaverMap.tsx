@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import mapService from "../services/map/map.service";
-import locationService from "../services/map/locationService";
+import locationService from "../services/api/locationService";
 import type { NaverMapInstance, Location } from "../types/naver.types";
 import LineGraph from "./LineGraph";
 import Modal from "./Modal";
