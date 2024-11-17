@@ -1,7 +1,9 @@
 import { LocationModel } from "../models/location";
-
+import { Bounds } from "../types/map.types";
 import db from "../models";
+
 import { Op } from "sequelize";
+
 class LocationService {
   /**
    * 모든 위치 조회
@@ -67,7 +69,32 @@ class LocationService {
       throw new Error(error instanceof Error ? error.message : "Failed to find locations in radius");
     }
   }
-
+  async findInBounds(bounds: Bounds): Promise<LocationModel[]> {
+    try {
+      return await db.location.findAll({
+        where: {
+          [Op.and]: [
+            {
+              lat: {
+                [Op.between]: [bounds.southWest.lat, bounds.northEast.lat]
+              }
+            },
+            {
+              lng: {
+                [Op.between]: [bounds.southWest.lng, bounds.northEast.lng]
+              }
+            }
+          ]
+        }
+      });
+    } catch (error) {
+      throw new Error(
+        error instanceof Error 
+          ? error.message 
+          : "Failed to find locations within bounds"
+      );
+    }
+  }
   /**
    * 위치 존재 여부 확인
    */

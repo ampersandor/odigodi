@@ -1,26 +1,36 @@
-import { Component } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
-import Navbar from "./components/Navbar/Navbar";
-import { Routes, Route } from "react-router-dom";
-import Contact from "./pages/Contact/Contact";
-import Home from "./pages/Home";
-import Tips from "./pages/Tips/Tips";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home/Home';
+import Contact from './pages/Contact/Contact';
+import Tips from './pages/Tips/Tips';
 
+// 라우트를 담당하는 컴포넌트를 분리
+const AppRoutes: React.FC = () => {
+  const location = useLocation();
+  
+  return (
+    <Routes location={location} key={location.pathname}>
+      <Route path="/" element={<Home />} />
+      <Route path="/tips" element={<Tips />} />
+      <Route path="/contact" element={<Contact />} />
+    </Routes>
+  );
+};
 
-class App extends Component {
-  render() {
-    return (
-      <>
-        <Navbar />
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/tips' element={<Tips />} />
-          <Route path='/Contact' element={<Contact />} />
-        </Routes>
-      </>
-    );
-  }
-}
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Navbar />
+      <main style={{ 
+        width: '100vw', 
+        height: '100vh',
+        paddingTop: 'var(--navbar-height)',
+      }}>
+        <AppRoutes />
+      </main>
+    </Router>
+  );
+};
 
 export default App;

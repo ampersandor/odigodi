@@ -1,86 +1,112 @@
-import { useEffect, useRef } from 'react';
-import LineGraph from './LineGraph';
-import Modal from './Modal';
-import { useState, useCallback } from "react";
-import ILocationData from "../types/location.type"
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import mapService from "../services/map/map.service";
+import locationService from "../services/map/locationService";
+import type { NaverMapInstance, Location } from "../types/naver.types";
+import LineGraph from "./LineGraph";
+import Modal from "./Modal";
 
 
-interface NaverMapProps {
-  data: ILocationData[]
-}
+const NaverMap: React.FC = () => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [mapInstance, setMapInstance] = useState<NaverMapInstance | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<{
+    name: string;
+    id: string;
+  } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleModal = useCallback(() => {
+    setIsModalOpen(prev => !prev);
+  }, []);
 
- 
-const NaverMap: React.FC<NaverMapProps> = (props) => {
-  console.log("l-> NaverMap is rendered!")
-  const { data } = props;
-  const mapElement = useRef(null);
-  const [isOpenModal, setOpenModal] = useState<boolean>(false);
-  const [name, setName] = useState<string>("defaultString");
-  const [location_id, setLocationId] = useState<string>("defaultString");
-  const onClickToggleModal = useCallback(() => {
-    setOpenModal(!isOpenModal);
-  }, [isOpenModal]);
-
-  useEffect(() => {
-    const { naver } = window;
-
-    if (!mapElement.current || !naver) return; 
-
-    const location = new naver.maps.LatLng(37.516, 127.1123);
-    const mapOptions: naver.maps.MapOptions = {
-      center: location,
-      zoom: 18
-    };
-    var markers: any = [], infoWindows: any = [];
-
-    const map = new naver.maps.Map(mapElement.current, mapOptions);
-    data.forEach((value, key) => {
-      var marker = new naver.maps.Marker({
-        map: map,
-        position: new naver.maps.LatLng(value.lng, value.lat),
-        title: value.offinm,
-        id: value.id
-      })
-      var infoWindow = new naver.maps.InfoWindow({
-        content: '<div style="width:100px;text-align:center;padding:5px;"><b>'+ value.offinm +'</b></div>'
-      });
-      markers.push(marker)
-      infoWindows.push(infoWindow)
+  const handleMarkerClick = useCallback((_: naver.maps.Marker, location: Location) => {
+    setSelectedLocation({
+      name: location.offinm,
+      id: location.id.toString()
     });
-    
-    function getHoverHandler(seq: any) {
-      return function(e: any) {
-          var marker = markers[seq],
-              infoWindow = infoWindows[seq];
-          if (infoWindow.getMap()) {
-              infoWindow.close();
-          } else {
-              infoWindow.open(map, marker);
-          }
-      }
-    }
+    setIsModalOpen(true);  // 마커 클릭 시 모달 열기
+  }, []);
+  
+  useEffect(() => {
+    const initializeMap = async () => {
+      console.log("initializeMap");
+      if (!window.naver || !mapRef.current) return;
 
-    for (var i=0, ii=markers.length; i<ii; i++) {
-        naver.maps.Event.addListener(markers[i], 'click', onClickToggleModal);
-        naver.maps.Event.addListener(markers[i], 'click', function (i:any) {console.log("you clicked " + i.overlay.id)
-            setName(i.overlay.title);
-            setLocationId(i.overlay.id);
+      // 지도 초기화
+      const map = mapService.initializeMap(mapRef.current);
+      
+      try {
+        // 초기 마커 데이터 가져오기
+        const bounds = mapService.getBounds(map);
+
+        const locations = await locationService.fetchLocationsInBounds(bounds);
+        
+        // 마커 생성 및 이벤트 연결
+        const instance = mapService.createMarkers(map, locations, {
+          onClick: handleMarkerClick
+        });        
+        setMapInstance(instance);
+
+        // 지도 이동 이벤트
+        window.naver.maps.Event.addListener(map, 'idle', async () => {
+          try {
+            const newBounds = mapService.getBounds(map);
+            const newLocations = await locationService.fetchLocationsInBounds(newBounds);
+            
+            if (mapInstance) {
+              mapService.clearMarkers(mapInstance);
+            }
+            
+            const newInstance = mapService.createMarkers(map, newLocations, {
+              onClick: (_, location) => {
+                setSelectedLocation({
+                  name: location.offinm,
+                  id: location.id.toString()
+                });
+                setIsModalOpen(true);  // 마커 클릭 시 모달 열기
+              }
+            });
+            console.log("countMarkers: ", mapService.countMarkers(newInstance));
+            
+            setMapInstance(newInstance);
+          } catch (error) {
+            console.error('Failed to update markers:', error);
+          }
         });
-        naver.maps.Event.addListener(markers[i], 'mouseover', getHoverHandler(i));
-        naver.maps.Event.addListener(markers[i], "mouseout", getHoverHandler(i)); 
-    }
-  }, [data]);
+      } catch (error) {
+        console.error('Failed to initialize markers:', error);
+      }
+    };
+
+    const script = document.createElement('script');
+    script.src = import.meta.env.VITE_MAP_URL;
+    script.onload = initializeMap;
+    document.head.appendChild(script);
+
+    return () => {
+      const scriptElement = document.querySelector(
+        `script[src*="${import.meta.env.VITE_MAP_URL}"]`
+      );
+      scriptElement?.remove();
+    };
+  }, [handleMarkerClick]);
 
   return (
-        <>
-          {isOpenModal &&
-              <Modal onClickToggleModal={onClickToggleModal}>
-                <LineGraph name={name} location_id={location_id} />
-              </Modal>
-          }
-          <div ref={mapElement} style={{ height:"100vh" }} />;
-        </>
-  )
-}
+    <div 
+      ref={mapRef}
+      style={{
+        width: "100%",
+        height: "100%"
+      }}
+    >
+        {isModalOpen && selectedLocation && (
+        <Modal onClickToggleModal={toggleModal}>
+          <div className="graph-container">
+            <LineGraph name={selectedLocation.name} location_id={selectedLocation.id} />
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
 
 export default NaverMap;

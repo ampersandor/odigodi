@@ -1,5 +1,5 @@
-@import '../../css/colors';
-@import '../../css/values';
+@use "../../css/colors" as *;
+@use "../../css/values" as *;
 
 .contact {
   min-height: 100vh;

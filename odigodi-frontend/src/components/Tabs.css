@@ -1,0 +1,41 @@
+/* ... 기존 스타일 ... */
+
+.tabs-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    /* 스크롤바 스타일링 */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  }
+  
+  /* 탭 네비게이션을 한 줄로 강제 */
+  .tabs-container .nav-tabs {
+    flex-wrap: nowrap !important;  /* 줄바꿈 방지 */
+    white-space: nowrap;  /* 텍스트 줄바꿈 방지 */
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .tabs-container .nav-item {
+    white-space: nowrap;
+    flex-shrink: 0;  /* 탭 아이템 축소 방지 */
+  }
+  
+  /* 스크롤바 스타일링 */
+  .tabs-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .tabs-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  .tabs-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+  
+  .tabs-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }

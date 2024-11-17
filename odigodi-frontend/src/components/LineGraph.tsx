@@ -1,21 +1,57 @@
-// @ts-nocheck
-import {Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
-  Title, Tooltip, Legend, TimeScale} from 'chart.js';
-import { Chart, Line } from 'react-chartjs-2';
+import React, { useEffect, useState } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import RentDataService from "../services/rent.service";
-import TradeDataService from "../services/trade.service";
-import { FunctionComponent, useEffect, useState } from 'react';
+import RentDataService from "../services/api/rent.service";
+import TradeDataService from "../services/api/trade.service";
 import 'chartjs-adapter-date-fns';
-import lottieData from "../static/find.json";
-import Lottie from "react-lottie";
-import React from 'react'
-import './linegraph.css'
+import Lottie from 'lottie-react';
+import lottieData from "../assets/find.json";
+import { RentData, TradeData } from '../types';
+import "./Tabs.css";
+
+// Chart.js 등록
 ChartJS.register(
-  CategoryScale, LinearScale, PointElement, LineElement, 
-  Title, Tooltip, Legend, TimeScale
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
 );
+
+interface LineGraphProps {
+  name: string;
+  location_id: string;
+}
+
+interface TransactionRent {
+  x: string;  // trade_ymd
+  y: number;  // deposit
+}
+
+interface TransactionTrade {
+  x: string;  // trade_ymd
+  y: number;  // dealamount
+}
+
+interface TransactionData {
+  [key: string]: TransactionRent[] | TransactionTrade[];
+}
+
 const defaultOptions = {
   loop: true,
   autoplay: true,
@@ -25,152 +61,163 @@ const defaultOptions = {
   },
 };
 
-interface Props {
-  name: string;
-  location_id: string;
-}
-type trans_rent = {
-  trade_ymd: string;
-  deposit: number;
-};
-type trans_trade = {
-  trade_ymd: string;
-  dealamount: number;
-}
-
-function timeout(delay: number) {
-  return new Promise( res => setTimeout(res, delay) );
-}
-
-const LineGraph: FunctionComponent<Props> = ({name, location_id})  =>{
-  console.log("l-> LineGraph is rendered with: " + name + " and " + location_id);
-  const [rents, setRents] = useState<Map<string, Array<trans_rent>>>();
-  const [trades, setTrades] = useState<Map<string, Array<trans_trade>>>();
-  const [sortedKeys, setSortedKeys] = useState(Array<string>); // State for storing the sorted keys
-  const [selectedTab, setSelectedTab] = useState<string>();
-
-  const options = { 
-    spanGaps: true, 
+const chartOptions = {
+    spanGaps: true,
     responsive: true,
+    maintainAspectRatio: true, // 이 옵션을 true로 설정
+    aspectRatio: 2, // 너비:높이 = 2:1 비율 설정
     plugins: {
       legend: {
         position: 'top' as const,
       },
       title: {
         display: true,
-        text: name,
+        text: '',
       },
     },
     scales: {
-      x: { type: 'time', ticks: { color: "black", autoSkip: true, }, grid: { display: false, },},
-      y: { title: { display: false }, ticks: { color: "black", autoSkip: true}, },
-    } 
+      x: {
+        type: 'time' as const,
+        ticks: { color: "black", autoSkip: true },
+        grid: { display: false },
+      },
+      y: {
+        title: { display: false },
+        ticks: { color: "black", autoSkip: true },
+      },
+    }
   };
+const LineGraph: React.FC<LineGraphProps> = ({ name, location_id }) => {
+  const [rents, setRents] = useState<TransactionData>({});
+  const [trades, setTrades] = useState<TransactionData>({});
+  const [sortedKeys, setSortedKeys] = useState<string[]>([]);
+  const [selectedTab, setSelectedTab] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    if(rents && trades){
-      console.log("sort selected keys")
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [tradeResponse, rentResponse] = await Promise.all([
+          TradeDataService.fetchTradeData(location_id),
+          RentDataService.fetchRentData(location_id)
+        ]);
+        // Process trade data
+        const tradeData: TransactionData = {};
+        (tradeResponse.data as TradeData[]).forEach((value) => {
+            if (!tradeData[value.excluusear]) {
+                tradeData[value.excluusear] = [];
+            }
+            tradeData[value.excluusear].push({
+                x: value.trade_ymd,
+                y: value.dealamount
+            });
+        });
+        setTrades(tradeData);
+        // Process rent data
+        const rentData: TransactionData = {};
+        (rentResponse.data as RentData[]).forEach((value) => {
+            if (!rentData[value.excluusear]) {
+            rentData[value.excluusear] = [];
+          }
+          rentData[value.excluusear].push({
+            x: value.trade_ymd,
+            y: value.deposit
+          });
+        });
+        setRents(rentData);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error in Drawing Line Graph:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [location_id]);
+
+  useEffect(() => {
+    if (rents && trades) {
       const allKeys = [...Object.keys(rents), ...Object.keys(trades)];
       const uniqueKeys = Array.from(new Set(allKeys));
-      const sortedKeys = uniqueKeys.sort();
-
-      setSortedKeys(sortedKeys); // Store the sorted keys in state
-      setSelectedTab(sortedKeys[0]);
+      const sorted = uniqueKeys.sort();
+      setSortedKeys(sorted);
+      setSelectedTab(sorted[0]);
     }
   }, [rents, trades]);
 
-  useEffect(() => {
-    TradeDataService.get(location_id)
-      .then((response: any) => {
-        console.log("From Backend, retrieved Trades:", response.data.data);
-        var trades = new Map<string, Array<trans_trade>>();
-        response.data.data.forEach((value: any, key: any) => {           
-          if(trades.has(value.excluusear)){
-            trades.get(value.excluusear)?.push({x: value.trade_ymd, y: value.dealamount})
-          }
-          else{
-            trades.set(value.excluusear, [{x: value.trade_ymd, y: value.dealamount}])
-          }
-        })
-        const tradeObject = Object.fromEntries(trades);
-        setTrades(tradeObject);
-      })
-      .catch((e: Error) => {
-        console.log(e);
-      });
+  if (isLoading) {
+    return (
+      <Lottie
+        animationData={lottieData}
+        height='80%'
+        width='80%'
+      />
+    );
+  }
 
-        RentDataService.get(location_id)
-      .then((response: any) => {
-        console.log("From Backend, retrieved Rents:", response.data.data);
-        const rents = new Map<string, Array<trans_rent>>();
-        
-        response.data.data.forEach((value: any) => {           
-          if(rents.has(value.excluusear)){
-            rents.get(value.excluusear)?.push({
-              x: value.trade_ymd, 
-              y: value.deposit
-            })
-          } else {
-            rents.set(value.excluusear, [{
-              x: value.trade_ymd, 
-              y: value.deposit
-            }])
-          }
-        });
-
-        // Map을 Object로 단순 변환
-        const rentsObject = Object.fromEntries(rents);
-        setRents(rentsObject);
-        console.log("Processed Rents:", rentsObject);
-      })
-      .catch((e: Error) => {
-        console.log(e);
-      });
-  }, []);
+  const chartData = {
+    datasets: [
+      {
+        label: '전세가',
+        data: selectedTab ? rents[selectedTab] || [] : [],
+        lineTension: 0.5,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: '매매가',
+        data: selectedTab ? trades[selectedTab] || [] : [],
+        lineTension: 0.5,
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      }
+    ]
+  };
 
   return (
+    
+    <div>
+      {sortedKeys.length == 0 && (
+        <div className="no-data-container">
+            <h2 className="no-data-message">전세 및 매매 데이터가 없습니다.(월세 및 반전세 제외)</h2>
+        </div>
+      )}
+      {sortedKeys.length > 0 && (
         <>
-        {(rents && trades && sortedKeys) ? 
-        <React.Fragment>
-          <Tabs
-            transition={false}
-            id="noanim-tab-example"
-            className="mb-3"
-            onSelect={(tabKey) => setSelectedTab(tabKey)} // Update the selectedTab state when a new tab is selected          
-          >
-            {Object.values(sortedKeys).map((areaKey) => (
-              <Tab key={areaKey} eventKey={areaKey} title={`${areaKey}m\xB2`} />
-            ))}
-          </Tabs>
-            <Line data={
-              {
-                datasets: [
-                  {
-                    label: '전세가',
-                    data: rents[selectedTab],
-                    lineTension: 0.5,
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                  },
-                  {
-                    label: '매매가',
-                    data: trades[selectedTab],
-                    lineTension: 0.5,
-                    borderColor: 'rgb(53, 162, 235)',
-                    backgroundColor: 'rgba(53, 162, 235, 0.5)',
-                  }
-                ]
-              }
-            } options={options}/>
-        </React.Fragment>
-        :
-        <Lottie
-                options={defaultOptions}
-                height='80%'
-                width='80%'
-                isStopped={false}
-                isPaused={false} />
-        }
+            <div className="tabs-container">
+                <Tabs
+                transition={false}
+                id="area-tabs"
+                className="mb-3"
+                activeKey={selectedTab}
+                onSelect={(key) => key && setSelectedTab(key)}
+                >
+                {sortedKeys.map((areaKey) => (
+                    <Tab key={areaKey} eventKey={areaKey} title={`${areaKey}m²`} />
+                ))}
+            </Tabs>
+            </div>
+            <div style={{ width: '100%', height: 'calc(100% - 50px)' }}>
+                <Line
+                    data={chartData}
+                options={{
+                ...chartOptions,
+                plugins: {
+                    ...chartOptions.plugins,
+                    title: {
+                    ...chartOptions.plugins.title,
+                    text: name
+                    }
+                }
+                }}
+                />
+            </div>
         </>
-  )
-}
+      )}
+    </div>
+  );
+};
+
 export default LineGraph;

@@ -25,7 +25,9 @@ class App {
     const allowedOrigins = [
       "https://odigodi.com",
       "https://web-odigodi-frontend-ac2nlkqcdiye.sel4.cloudtype.app",
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:4173"
     ];
 
     this.app.use(cors({
