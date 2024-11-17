@@ -37,16 +37,51 @@
 
 .graph-container {
   width: 100%;
-  height: calc(100% - 80px);
+  height: calc(100% - 50px);
   min-height: 400px;
   position: relative;
+}
+
+.graph-container canvas {
+  height: 100% !important;  /* Canvas 높이도 강제 지정 */
+  min-height: 400px !important;
 }
 
 @media (max-width: 767px) {
   .dialog-box {
     width: 95vw;
-    height: 90vh;
+    height: 60vh;
     margin: 0 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .graph-container {
+    height: 100% !important;  /* Canvas 높이도 강제 지정 */
+    flex: 1;           /* 남은 공간을 모두 차지하도록 */
+    height: 100%;      /* 높이를 100%로 설정 */
+    min-height: 450px; /* 최소 높이 증가 */
+    margin-bottom: 0;  /* 하단 여백 제거 */
+  }
+  .graph-container canvas {
+    height: 100% !important;  /* Canvas 높이도 강제 지정 */
+    min-height: 250px !important;
+  }
+
+  .dialog-box h2 {
+    margin: 0 0 10px 0; /* 헤더 마진 감소 */
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-box {
+    height: 50vh;
+    padding: 12px;
+  }
+
+  .graph-container {
+    min-height: 400px; /* 작은 화면에서도 충분한 높이 */
   }
 }
 

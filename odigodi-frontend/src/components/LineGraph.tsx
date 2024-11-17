@@ -55,7 +55,7 @@ interface TransactionData {
 const chartOptions = {
     spanGaps: true,
     responsive: true,
-    maintainAspectRatio: true, // 이 옵션을 true로 설정
+    maintainAspectRatio: false, // 이 옵션을 true로 설정
     aspectRatio: 2, // 너비:높이 = 2:1 비율 설정
     plugins: {
       legend: {
