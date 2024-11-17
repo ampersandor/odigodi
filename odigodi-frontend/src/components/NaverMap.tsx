@@ -77,10 +77,28 @@ const NaverMap: React.FC = () => {
       }
     };
 
-    const script = document.createElement('script');
-    script.src = import.meta.env.VITE_MAP_URL;
-    script.onload = initializeMap;
-    document.head.appendChild(script);
+    const loadMapScript = async () => {
+        // 네이버 맵 스크립트 로드
+      const mapScript = document.createElement('script');
+      mapScript.src = import.meta.env.VITE_MAP_URL;
+      
+      // 클러스터링 스크립트 로드 (로컬 파일 사용)
+      const clusterScript = document.createElement('script');
+      clusterScript.src = "/MarkerClustering.js";  // public 폴더에서 로드
+      
+      // 스크립트 로드 순서 보장
+      await new Promise<void>((resolve) => {
+        mapScript.onload = () => {
+          document.head.appendChild(clusterScript);
+          clusterScript.onload = () => resolve();
+        };
+        document.head.appendChild(mapScript);
+      });
+
+      initializeMap();
+    };
+
+    loadMapScript();
 
     return () => {
       const scriptElement = document.querySelector(

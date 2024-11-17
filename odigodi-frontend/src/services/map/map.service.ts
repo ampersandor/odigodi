@@ -94,12 +94,70 @@ class MapService {
       naver.maps.Event.addListener(marker, 'mouseout', () => {
         infoWindow.close();
       });
-
-
-
+    });
+    const clusterer = new MarkerClustering({
+      minClusterSize: 2,
+      maxZoom: 13,
+      map: map,
+      markers: markers,
+      disableClickZoom: false,
+      gridSize: 120,
+      icons: [
+        {
+          content: this.createClusterIcon(markers.length, 1),
+          size: new naver.maps.Size(40, 40),
+          anchor: new naver.maps.Point(20, 20)
+        },
+        {
+          content: this.createClusterIcon(markers.length, 2),
+          size: new naver.maps.Size(50, 50),
+          anchor: new naver.maps.Point(25, 25)
+        },
+        {
+          content: this.createClusterIcon(markers.length, 3),
+          size: new naver.maps.Size(60, 60),
+          anchor: new naver.maps.Point(30, 30)
+        }
+      ]
     });
 
-    return { map, markers, infoWindows };
+    return { map, markers, infoWindows, clusterer };
+  }
+  private createClusterIcon(count: number, level: number): string {
+    return `
+      <div class="cluster cluster-${level}" style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        border-radius: 50%;
+        background: ${this.getClusterColor(level)};
+        width: ${this.getClusterSize(level)}px;
+        height: ${this.getClusterSize(level)}px;
+        font-size: ${12 + (level * 2)}px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      ">
+        ${count}
+      </div>
+    `;
+  }
+
+  private getClusterColor(level: number): string {
+    switch (level) {
+      case 1:
+        return 'rgba(29, 97, 255, 0.8)';
+      case 2:
+        return 'rgba(25, 77, 209, 0.8)';
+      case 3:
+        return 'rgba(21, 57, 163, 0.8)';
+      default:
+        return 'rgba(29, 97, 255, 0.8)';
+    }
+  }
+
+  private getClusterSize(level: number): number {
+    return 40 + (level - 1) * 10;  // 40px, 50px, 60px
   }
 
   getBounds(map: naver.maps.Map): MapBounds {

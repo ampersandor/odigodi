@@ -3,7 +3,7 @@ declare global {
     naver: typeof naver;
     MarkerClustering?: typeof MarkerClustering;
   }
-  
+
   class MarkerClustering {
     constructor(options: MarkerClusteringOptions);
   }
