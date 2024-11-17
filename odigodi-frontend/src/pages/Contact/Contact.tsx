@@ -1,4 +1,4 @@
-import React, { useState, useRef, FormEvent, useCallback, lazy, Suspense, useEffect } from "react";
+import React, { useState, useRef, FormEvent, useCallback, Suspense } from "react";
 import { motion } from "framer-motion";
 import emailjs from '@emailjs/browser';
 import styled from "styled-components";

@@ -52,15 +52,6 @@ interface TransactionData {
   [key: string]: TransactionRent[] | TransactionTrade[];
 }
 
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: lottieData,
-  rendererSettings: {
-    preserveAspectRatio: "none",
-  },
-};
-
 const chartOptions = {
     spanGaps: true,
     responsive: true,
