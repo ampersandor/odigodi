@@ -1,6 +1,4 @@
-import { MapOptions } from '../../types/map.types';
-
-export const DEFAULT_MAP_OPTIONS: MapOptions = {
+export const DEFAULT_MAP_OPTIONS = {
   center: {
     lat: 37.516,
     lng: 127.1123,
