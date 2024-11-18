@@ -1,4 +1,4 @@
-import { MapOptions } from '../../types/naver.types';
+import { MapOptions } from '../../types/map.types';
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
   center: {

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import mapService from "../services/map/map.service";
-import locationService from "../services/api/locationService";
-import type { NaverMapInstance, Location } from "../types/naver.types";
-import LineGraph from "./LineGraph";
-import Modal from "./Modal";
+import mapService from "../../services/map/map.service";
+import locationService from "../../services/api/locationService";
+import type { NaverMapInstance, Location } from "../../types/map.types";
+import LineGraph from "../../components/LineGraph";
+import Modal from "../../components/Modal";
 
 
-const NaverMap: React.FC = () => {
+const Map: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<NaverMapInstance | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -53,6 +53,7 @@ const NaverMap: React.FC = () => {
             const newLocations = await locationService.fetchLocationsInBounds(newBounds);
             
             if (mapInstance) {
+              console.log("clearMarkers");
               mapService.clearMarkers(mapInstance);
             }
             
@@ -101,10 +102,10 @@ const NaverMap: React.FC = () => {
     loadMapScript();
 
     return () => {
-      const scriptElement = document.querySelector(
-        `script[src*="${import.meta.env.VITE_MAP_URL}"]`
+      const scripts = document.querySelectorAll(
+        `script[src*="${import.meta.env.VITE_MAP_URL}"], script[src*="MarkerClustering.js"]`
       );
-      scriptElement?.remove();
+      scripts.forEach(script => script.remove());
     };
   }, [handleMarkerClick]);
 
@@ -127,4 +128,4 @@ const NaverMap: React.FC = () => {
   );
 };
 
-export default NaverMap;
+export default Map;

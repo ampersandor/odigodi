@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Home from './pages/Home/Home';
+import Map from './pages/Map/Map';
 import Contact from './pages/Contact/Contact';
 import Tips from './pages/Tips/Tips';
 
@@ -11,7 +11,7 @@ const AppRoutes: React.FC = () => {
   
   return (
     <Routes location={location} key={location.pathname}>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Map />} />
       <Route path="/tips" element={<Tips />} />
       <Route path="/contact" element={<Contact />} />
     </Routes>

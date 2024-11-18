@@ -1,4 +1,4 @@
-import { MapBounds, Location } from '../../types/naver.types';
+import { MapBounds, Location } from '../../types/map.types';
 
 class LocationService {
   private static instance: LocationService;

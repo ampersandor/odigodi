@@ -1,9 +1,10 @@
-import { MapBounds, NaverMapInstance, Location } from '../../types/naver.types';
+import { MapBounds, NaverMapInstance, Location } from '../../types/map.types';
 import { DEFAULT_MAP_OPTIONS } from './map.config';
 
 class MapService {
   private static instance: MapService;
-
+  private eventListeners: naver.maps.MapEventListener[] = [];
+  private currentClusterer: MarkerClustering | undefined;
   private constructor() {}
 
   static getInstance(): MapService {
@@ -37,6 +38,7 @@ class MapService {
     const { naver } = window;
     const markers: naver.maps.Marker[] = [];
     const infoWindows: naver.maps.InfoWindow[] = [];
+
     
     locations.forEach((location) => {
       const marker = new naver.maps.Marker({
@@ -78,23 +80,32 @@ class MapService {
       markers.push(marker);
       infoWindows.push(infoWindow);
 
-      if (callbacks && typeof callbacks.onClick === 'function') {
-        naver.maps.Event.addListener(marker, 'click', () => {
+      if (callbacks?.onClick) {
+        const clickListener = naver.maps.Event.addListener(marker, 'click', () => {
           callbacks.onClick!(marker, location);
         });
+        this.eventListeners.push(clickListener);
       }
 
-      naver.maps.Event.addListener(marker, 'mouseover', () => {
+      const mouseoverListener = naver.maps.Event.addListener(marker, 'mouseover', () => {
         if (infoWindow.getMap()) {
           infoWindow.close();
         } else {
           infoWindow.open(map, marker);
         }
       });
-      naver.maps.Event.addListener(marker, 'mouseout', () => {
+      this.eventListeners.push(mouseoverListener);
+
+      const mouseoutListener = naver.maps.Event.addListener(marker, 'mouseout', () => {
         infoWindow.close();
       });
+      this.eventListeners.push(mouseoutListener);
     });
+
+    if (this.currentClusterer) {
+      this.currentClusterer.setMap(null);
+    }
+
     const clusterer = new MarkerClustering({
       minClusterSize: 2,
       maxZoom: 13,
@@ -120,6 +131,8 @@ class MapService {
         }
       ]
     });
+
+    this.currentClusterer = clusterer;
 
     return { map, markers, infoWindows, clusterer };
   }
@@ -171,13 +184,36 @@ class MapService {
     };
   }
 
-  clearMarkers(mapInstance: {
-    markers: naver.maps.Marker[];
-    infoWindows: naver.maps.InfoWindow[];
-  }): void {
+  clearMarkers(mapInstance: NaverMapInstance): void {
+    if (this.currentClusterer) {
+      this.currentClusterer.setMap(null);
+      // @ts-ignore
+      this.currentClusterer._clusters = [];
+      // @ts-ignore
+      this.currentClusterer._markers = [];
+      // @ts-ignore
+      this.currentClusterer._markerRelations = [];
+      this.currentClusterer = undefined;
+    }
+    this.eventListeners.forEach(listener => {
+      naver.maps.Event.removeListener(listener);
+    });
+    this.eventListeners = []; 
+
     mapInstance.markers.forEach((marker: naver.maps.Marker) => {
       marker.setMap(null);
     });
+    mapInstance.infoWindows.forEach(infoWindow => {
+      infoWindow.close();
+    });
+
+    mapInstance.markers.length = 0;
+    mapInstance.infoWindows.length = 0;
+    this.eventListeners.length = 0;
+
+    console.log('Cleared all markers, infoWindows, and listeners');
+
+
   }
 }
 

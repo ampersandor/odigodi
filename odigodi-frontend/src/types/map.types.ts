@@ -6,6 +6,8 @@ declare global {
 
   class MarkerClustering {
     constructor(options: MarkerClusteringOptions);
+    setMap(map: naver.maps.Map | null): void;
+    getMarkers(): naver.maps.Marker[];
   }
 
   interface MarkerClusteringOptions {
@@ -48,6 +50,10 @@ declare global {
         getMap(): Map | null;
       }
 
+      class MapEventListener {
+        constructor(map: Map, eventType: string, handler: Function);
+      }
+
       class Point {
         constructor(x: number, y: number);
       }
@@ -76,13 +82,13 @@ declare global {
       }
 
       namespace Event {
-        function addListener(target: any, type: string, handler: Function): void;
+        function addListener(target: any, type: string, handler: Function): MapEventListener;
+        function removeListener(listener: MapEventListener): void;
       }
     }
   }
 }
 
-// 공통 인터페이스
 export interface Coordinates {
   lat: number;
   lng: number;
@@ -105,12 +111,5 @@ export interface Location extends Coordinates {
   id: string;
 }
 
-export interface MapOptions {
-  center: Coordinates;
-  zoom: number;
-  minZoom?: number;
-  maxZoom?: number;
-  zoomControl?: boolean;
-}
 
 export {};
