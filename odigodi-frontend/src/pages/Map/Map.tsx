@@ -8,7 +8,9 @@ import Modal from "../../components/Modal";
 
 const Map: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [mapInstance, setMapInstance] = useState<NaverMapInstance | null>(null);
+  const mapInstanceRef = useRef<NaverMapInstance | null>(null);  // useRef 추가
+
+
   const [selectedLocation, setSelectedLocation] = useState<{
     name: string;
     id: string;
@@ -28,12 +30,11 @@ const Map: React.FC = () => {
   
   useEffect(() => {
     const initializeMap = async () => {
-      console.log("initializeMap");
       if (!window.naver || !mapRef.current) return;
 
       // 지도 초기화
       const map = mapService.initializeMap(mapRef.current);
-      
+
       try {
         // 초기 마커 데이터 가져오기
         const bounds = mapService.getBounds(map);
@@ -43,32 +44,23 @@ const Map: React.FC = () => {
         // 마커 생성 및 이벤트 연결
         const instance = mapService.createMarkers(map, locations, {
           onClick: handleMarkerClick
-        });        
-        setMapInstance(instance);
-
+        });
+        mapInstanceRef.current = instance
         // 지도 이동 이벤트
         window.naver.maps.Event.addListener(map, 'idle', async () => {
           try {
             const newBounds = mapService.getBounds(map);
             const newLocations = await locationService.fetchLocationsInBounds(newBounds);
-            
-            if (mapInstance) {
-              console.log("clearMarkers");
-              mapService.clearMarkers(mapInstance);
+            if (!mapInstanceRef.current){
+              console.log("mapInstance is null");
+              return;
             }
+            mapService.clearMarkers(mapInstanceRef.current);
             
             const newInstance = mapService.createMarkers(map, newLocations, {
-              onClick: (_, location) => {
-                setSelectedLocation({
-                  name: location.offinm,
-                  id: location.id.toString()
-                });
-                setIsModalOpen(true);  // 마커 클릭 시 모달 열기
-              }
+              onClick: handleMarkerClick
             });
-            console.log("countMarkers: ", mapService.countMarkers(newInstance));
-            
-            setMapInstance(newInstance);
+            mapInstanceRef.current = newInstance;
           } catch (error) {
             console.error('Failed to update markers:', error);
           }
@@ -96,18 +88,17 @@ const Map: React.FC = () => {
         document.head.appendChild(mapScript);
       });
 
-      initializeMap();
+      await initializeMap();
     };
 
     loadMapScript();
-
     return () => {
       const scripts = document.querySelectorAll(
         `script[src*="${import.meta.env.VITE_MAP_URL}"], script[src*="MarkerClustering.js"]`
       );
       scripts.forEach(script => script.remove());
     };
-  }, [handleMarkerClick]);
+  }, []);
 
   return (
     <div 
