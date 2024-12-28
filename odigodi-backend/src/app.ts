@@ -24,7 +24,7 @@ class App {
     // CORS 설정
     const allowedOrigins = [
       "https://odigodi.com",
-      "https://web-odigodi-frontend-ac2nlkqcdiye.sel4.cloudtype.app",
+      process.env.VITE_APP_URL,
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:4173"
