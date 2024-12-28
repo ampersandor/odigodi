@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
+  "rimraf": "./node_modules/rimraf/bin.js",
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
