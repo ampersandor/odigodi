@@ -23,8 +23,8 @@ class App {
 
     // CORS 설정
     const allowedOrigins = [
-      "https://odigodi.com",
-      "https://www.odigodi.com",
+      "https://odigodi.app",
+      "https://www.odigodi.app",
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:4173"
