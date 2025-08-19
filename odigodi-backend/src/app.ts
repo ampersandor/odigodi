@@ -27,7 +27,8 @@ class App {
       "https://www.odigodi.app",
       "http://localhost:3000",
       "http://localhost:5173",
-      "http://localhost:4173"
+      "http://localhost:4173",
+      "https://odigodi-backend.vercel.app/"
     ];
 
     this.app.use(cors({
